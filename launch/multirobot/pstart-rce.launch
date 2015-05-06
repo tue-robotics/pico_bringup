@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-  <node name="pico_rce_script" pkg="pico_launch_files" type="pico_rce_script.sh" output="screen" />
+  <node name="pico_rce_script" pkg="pico_bringup" type="pico_rce_script.sh" output="screen" />
 
 </launch>
   

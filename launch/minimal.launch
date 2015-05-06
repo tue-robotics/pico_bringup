@@ -11,7 +11,7 @@
         </node>
 
 	<!-- Laser publishing -->
-	<include file="$(find pico_launch_files)/launch/sensors/hokuyo.launch"/>
+	<include file="$(find pico_bringup)/launch/sensors/hokuyo.launch"/>
 
         <!-- Head controller -->
         <node pkg="pico_head_controller" type="head_driver.py" name="head_controller" output="screen">

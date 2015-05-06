@@ -10,16 +10,16 @@
     <!-- Localization -->
     <group if="$(arg gmapping)">
         <!-- GMAPPING -->
-        <include file="$(find pico_launch_files)/launch/middleware/gmapping.launch" />
+        <include file="$(find pico_bringup)/launch/middleware/gmapping.launch" />
     </group>
 
     <group unless="$(arg gmapping)">
 
-        <include file="$(find pico_launch_files)/launch/middleware/localization_snapmap.launch" />
+        <include file="$(find pico_bringup)/launch/middleware/localization_snapmap.launch" />
     </group>
 
     <!-- Navigation -->
-    <include file="$(find pico_launch_files)/launch/middleware/base_navigation_3d.launch" />
+    <include file="$(find pico_bringup)/launch/middleware/base_navigation_3d.launch" />
     <node pkg="tue_move_base_bridge" type="bridge_pico.py" name="tue_move_base_bridge" output="screen"/>
 
   </group>

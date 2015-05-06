@@ -15,13 +15,13 @@
     <!-- Start tue_move_base with the projected map from tue_map_3d (octomap) -->
     <node pkg="tue_move_base_3d" type="move_base_3d" respawn="true" name="move_base_3d" output="screen" machine="$(arg machine)" launch-prefix="$(arg launch-prefix)">
         <!-- local and global planner parameters -->        
-        <rosparam file="$(find pico_launch_files)/parameters/move_base_3d.yaml" command="load" />
+        <rosparam file="$(find pico_bringup)/parameters/move_base_3d.yaml" command="load" />
 
         <!-- Map parameters for octomap -->        
-        <rosparam file="$(find pico_launch_files)/parameters/map3d_params.yaml" command="load" />
+        <rosparam file="$(find pico_bringup)/parameters/map3d_params.yaml" command="load" />
 
         <!-- Projected map settings for octomap -->
-        <rosparam file="$(find pico_launch_files)/parameters/projected_map_params.yaml" command="load" />
+        <rosparam file="$(find pico_bringup)/parameters/projected_map_params.yaml" command="load" />
         
         <!-- Set correct map topics for tue_map_3d node -->
         <param name="load_octomap" value="$(arg load_octomap)" />

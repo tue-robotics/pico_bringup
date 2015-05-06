@@ -6,6 +6,6 @@
 	<arg if="$(arg ROBOT_REAL)" name="tts_module" value="philips"/>        
 	<arg unless="$(arg ROBOT_REAL)" name="tts_module" value="festival"/>        
     
-    <include file="$(find pico_launch_files)/launch/interaction/text_to_speech_$(arg tts_module).launch"/> 
+    <include file="$(find pico_bringup)/launch/interaction/text_to_speech_$(arg tts_module).launch"/> 
         	   		
 </launch>

@@ -37,7 +37,7 @@
 
 	    <!-- Laser publishing -->
 	    <group if="$(arg laser_scanner)">
-		<include file="$(find pico_launch_files)/launch/sensors/hokuyo.launch"/>
+		<include file="$(find pico_bringup)/launch/sensors/hokuyo.launch"/>
             </group>
 	    
 	    <!-- Wide angle camera -->
@@ -109,13 +109,13 @@
     <group if="$(arg ROBOT_REAL)">
       <!-- Asus RGBD camera -->
       <group if="$(arg asus_cam)">
-        <include file="$(find pico_launch_files)/launch/sensors/asusxtion.launch"/>
+        <include file="$(find pico_bringup)/launch/sensors/asusxtion.launch"/>
       </group>
     </group>
 
     <group unless="$(arg ROBOT_REAL)">
       <!-- SIMULATION -->
-      <include file="$(find pico_launch_files)/launch/simulator/$(optenv SIMULATOR).launch">
+      <include file="$(find pico_bringup)/launch/simulator/$(optenv SIMULATOR).launch">
         <arg name="gui" value="$(arg gui)"/>
         <arg name="env" value="$(arg env)"/>
         <arg name="teleport" value="$(arg teleport)"/>
