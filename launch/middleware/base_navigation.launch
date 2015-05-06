@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="machine" value="$(optenv MACHINE_BASE_NAVIGATION localhost)"/>
+    <include file="$(find pico_machine_files)/machines/$(arg machine).machine" />
+
+    <arg name="ROBOT_MAP" default="$(optenv ROBOT_MAP tue_robotics_lab)"/> 
+
+    <node name="nav_map_server" pkg="map_server" type="map_server" args="$(find pico_maps)/maps/$(arg ROBOT_MAP)/nav/yaml" output="screen" machine="$(arg machine)">
+        <remap from="map" to="/nav_map"/>
+    </node>
+
+    
+    <node pkg="tue_move_base" type="move_base" respawn="true" name="move_base" output="screen" machine="$(arg machine)">
+        
+	<remap from="map" to="/nav_map"/>
+        
+	<!-- local and global planner parameters -->        
+        <rosparam file="$(find pico_launch_files)/parameters/move_base.yaml" command="load" />
+
+        <!-- Global costmap settings -->
+        <rosparam file="$(find pico_launch_files)/parameters/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find pico_launch_files)/parameters/costmap_global_params.yaml" command="load" />
+
+        <!-- Local costmap settings -->
+        <rosparam file="$(find pico_launch_files)/parameters/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find pico_launch_files)/parameters/costmap_local_params.yaml" command="load" />
+       
+    </node>
+
+</launch>

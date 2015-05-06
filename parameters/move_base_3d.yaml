@@ -1,0 +1,73 @@
+world_frame_id : /map
+base_frame_id : /pico/base_link
+
+base_global_planner : tue_astar_planner_3d/AStarPlannerROS
+
+base_local_planner  : amigo_navigation_local_3d/AmigoLocalPlanner
+
+# time to re-plan before the action client is aborted
+time_to_replan : 5.0
+# max time out before a long re-plan is executed
+max_time_to_execute_replan : 20.0
+# a re-plan will be executed immediately of the length difference factor 
+# is below this value
+replan_length_difference_factor : 1.5
+# re-planning continues if the robot waits to execute a new plan
+# if a re-plan is within this tolerance it is not considered
+replan_length_difference_tolerance : 0.2
+
+# tolerance region on the goal position
+goal_area_radius : 0.1
+
+# Planner frequency for the global plan, obsolete
+# planner_frequency : 3
+
+# Specific global planner parameters
+AStarPlannerROS:
+    # the amount of smoothing to apply on the path
+    smoothing_window_size : 1    
+
+# Specific local planner parameters
+AmigoLocalPlanner:
+    # velocity and acceleration bounds
+    max_vel_translation : 0.3   #0.5
+    max_acc_translation : 0.1  #0.15
+    max_vel_rotation    : 0.5   #0.5
+    max_acc_rotation    : 0.5 #2.5  #0.2
+    
+    # the gain on the velocity
+    gain : 0.5
+    
+    # goal tolerance region
+    xy_goal_tolerance   : 0.1   #0.1
+    yaw_goal_tolerance  : 0.05  #0.05
+
+    # maximum allowed yaw error between robot and path while driving
+    max_yaw_error_driving : 0.175 * PI #1.4  # 0.25 * PI
+
+    # maximum allowed yaw error between robot and path while standing still
+    max_yaw_error_still   : 0.3
+
+    # the robot standing still is defined as having a lower velocity than STILL_MAX_VEL
+    still_max_vel         : 0.05
+
+    # if the robot is within MAX_STRAFE_DISTANCE from the goal, it strafes
+    max_strafe_distance     : 0.4
+
+    # if the robot is located more than MAX_PATH_DISTANCE from the nearest waypoint on the global path,
+    # it stops and a new plan must be generated
+    max_path_distance       : 0.5
+
+    # the local planner puts a local goal in front of the robot, and plans a straight line towards
+    # it (if the line is free of obstacles). MAX_LOCAL_GOAL_DISTANCE defines how far this local goal
+    # located from the robot. If the robot should stick to the global path more, decrease this value.
+    # However, small values may result in 'wobbely' behavior (stick to th path too much).
+    max_local_goal_distance : 0.5
+
+    # the local planner looks ahead LOOK_AHEAD meters along the global path. If it encounters
+    # and obstacle on the path, it will command the robot to stop.
+    look_ahead : 1.5
+    # TODO
+    #local_look_ahead        : 1.5
+    #global_look_ahead       : 5.0
+    

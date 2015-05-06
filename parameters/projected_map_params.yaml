@@ -1,0 +1,6 @@
+# 2D map projection
+incremental_2D_projection : true
+inscribed_radius : 0.30      
+circumscribed_radius : 0.30  
+inflation_radius : 5.0       
+cost_decay_weight : 5.0  

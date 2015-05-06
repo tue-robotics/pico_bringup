@@ -1,0 +1,50 @@
+resolution : 0.05
+world_frame_id : /map
+base_frame_id : /pico/base_link
+load_octomap: true      
+# please make sure that the correct read directory is set in the launch file
+# By Sjoerd: name is now specified in base_navigation_3d.launch, and based on ROBOT_ENV variable
+#octomap_filename: robotics_testlab_A_sim.ot
+
+# ground filtering
+# the robot's base frame in which ground plane detection is performed (if enabled)
+filter_ground : true
+ground_filter/distance : 0.04
+ground_filter/angle : 0.17
+ground_filter/plane_distance : 0.08
+
+# speckle filtering
+filter_speckles : false
+
+# maximum range to integrate for both Kinects and base laser
+sensor_model/max_range_camera : 3.5
+sensor_model/max_range_laser : 6.0
+# do not set the min_z value heigher than the ground plan, this discards the floor plane!
+#pointcloud_min_z : -0.2
+#pointcloud_max_z : 1.50
+# pointcloud filtering
+use_blind_region : true
+occupancy_min_z : 0.025
+# do not set this higher than the range of the Kinect!
+# otherwise everything will be unknown when using cell probability
+occupancy_max_z : 1.20
+
+# sensor model 
+# If you increase the hit probability and decrease the miss probability, 
+# it will make the map trust the sensor more after one measurement. 
+# If you increase min and decrease max at the same time, 
+# this will enable fast updates at the cost of more sensor noise appearing in the map
+
+# probabilities for hits and misses, default 0.7 and 0.4
+sensor_model/hit : 0.80
+sensor_model/miss : 0.20
+# min and max probabilities for clamping, default 0.12 and 0.97
+sensor_model/min : 0.10
+sensor_model/max : 0.90
+
+# use the probability of a cell being free/occupied in the generation of
+# the costmap
+# EXPERIMENTAL: USE WITH CAUTION
+use_cell_probability : false
+update_window_size : 3.0
+
