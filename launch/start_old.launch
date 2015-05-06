@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="ROBOT_REAL" default="$(optenv ROBOT_REAL false)" />
+	
+    <arg name="asus_cam" default="true"/> <!-- Kinect camera on top -->
+    <arg name="gui" default="true"/> <!-- Gazebo GUI when using old Gazebo -->
+    <arg name="wide_angle_cam" default="false"/> <!--Front wide angle cam -->
+    <arg name="joystick" default="false"/> <!-- Allows to overrule cmd_vel with joystick--> 
+    <arg name="safedrive" default="false"/> <!-- When using joystick, steers Pico away from walls and corners -->      
+    <arg name="laser_scanner" default="true"/> <!-- Laser scanner -->
+    <arg name="env" default="$(optenv ROBOT_ENV robotics_testlab_A)" /> <!-- Gazebo simulation environment -->      
+    <arg name="teleport" default="false"/>   <!-- Used by fast_simulator: set to true to instantly move to goals while navigating --> 
+    <arg name="kinect_raytracing" default="true"/> <!-- Used by fast_simulator: cool Sjoerd gadget -->
+    
+    <group ns="pico">
+        <!-- Do for both: Simulator and Real Robot -->
+
+        <group if="$(arg ROBOT_REAL)">
+            <!-- REAL ROBOT -->
+
+	    <!-- load robot model: Pico Gazebo -->
+            <param name="/pico/robot_description" textfile="$(find pico_description)/urdf/pico.urdf" />	
+
+            <!-- start robot state publisher -->
+            <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+              <param name="publish_frequency" type="double" value="50.0" />
+              <param name="tf_prefix" type="string" value="pico" />
+              <remap from="joint_states" to="/pico/joint_states"/>
+            </node>
+
+	    <!-- Odometry publishing -->
+            <node pkg="pico_base_controller" type="omnibase.py" name="odometry_publisher" output="screen">
+                <param name="base_frame" value="/pico/base_link"/>
+                <param name="frame_id" value="/pico/laser"/>
+            </node>
+
+	    <!-- Laser publishing -->
+	    <group if="$(arg laser_scanner)">
+		<include file="$(find pico_bringup)/launch/sensors/hokuyo.launch"/>
+            </group>
+	    
+	    <!-- Wide angle camera -->
+	    <group if="$(arg wide_angle_cam)">
+              <!-- Camera publishing -->
+              <node name="webcam" pkg="usb_cam" type="usb_cam_node">
+            	<param name="video_device" value="/dev/video0" />
+            	<param name="image_width" value="640" />
+            	<param name="image_height" value="480" />
+            	<param name="pixel_format" value="mjpeg" />
+              	<param name="camera_frame_id" value="/camera" />
+              	<param name="io_method" value="mmap"/>
+                <remap from="webcam/image_raw" to="camera"/>
+                <remap from="webcam/camera_info" to="camera_info"/>
+              </node>
+            </group>
+
+            <!-- Head controller -->
+            <node pkg="pico_head_controller" type="head_driver.py" name="head_controller" output="screen">
+		<param name="port" value="/dev/ttyACM2"/>
+		<param name="pan_neutral" value="1500"/>
+		<param name="pan_max_angle" value="1.047"/>
+		<param name="tilt_neutral" value="800"/>
+		<param name="tilt_max_angle" value="0.524"/>
+	    </node>
+
+            <!-- Touchscreen controller -->
+            <!--<node pkg="pico_drivers" type="display_driver" name="display_driver">
+		<param name="port" value="/dev/input/event14"/>
+	    </node>-->
+
+            <!-- Joint States Publisher -->
+            <node pkg="pico_joint_states" type="PICO_JointStates" name="joint_states_aggregator"/>
+
+            <!-- Wireless Logitech joystick Rumblepad 2 -->
+	    <group if="$(arg joystick)">
+              <!-- Joystick publishing -->
+              <node name="joystick" pkg="joy" type="joy_node">
+                <param name="dev" value="/dev/input/js0" />
+              </node>
+              <!-- Convert joy message to PICO commands -->
+              <node name="joy_controller" pkg="pico_drivers" type="joy_controller">
+	        <remap from="cmd_vel" to="cmd_vel_raw"/>
+	        <param name="axis_deadman" value="4"/>
+	        <param name="axis_linear" value="1"/>
+	        <param name="axis_angular" value="0"/>
+	        <param name="scale_linear" value="0.6"/>
+	        <param name="scale_angular" value="0.8"/>
+	        <param name="axis_pan" value="2"/>
+	        <param name="axis_tilt" value="3"/>
+	        <param name="scale_pan" value="60"/>
+	        <param name="scale_tilt" value="30"/>
+              </node>
+              <!-- Steers PICO away from walls it detects with its laserscanner (WATCH OUT STILL FOR TABLES AND GLASS DOORS) -->
+	      <group if="$(arg safedrive)">
+                <node name="safedrive" pkg="pico_drivers" type="safedrive" output="screen">
+	          <param name="safety_radius" value="0.4"/>
+		  <param name="safety_speed" value="0.2"/>
+	          <param name="min_radius" value="0.1"/>
+	          <remap from="~/cmd_vel_filt" to="cmd_vel"/>
+		  <remap from="~/cmd_vel_raw" to="cmd_vel_raw"/>
+	          <remap from="~/scan" to="laser"/>
+                </node>
+	      </group>
+            </group>
+        </group>
+    </group>
+
+    <group if="$(arg ROBOT_REAL)">
+      <!-- Asus RGBD camera -->
+      <group if="$(arg asus_cam)">
+        <include file="$(find pico_bringup)/launch/sensors/asusxtion.launch"/>
+      </group>
+    </group>
+
+    <group unless="$(arg ROBOT_REAL)">
+      <!-- SIMULATION -->
+      <include file="$(find pico_bringup)/launch/simulator/$(optenv SIMULATOR).launch">
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="env" value="$(arg env)"/>
+        <arg name="teleport" value="$(arg teleport)"/>
+        <arg name="kinect_raytracing" value="$(arg kinect_raytracing)"/>
+      </include>                
+    </group>
+
+    <!-- diagnostics -->
+    <include file="$(find node_alive)/launch/server.launch"/>
+</launch>
