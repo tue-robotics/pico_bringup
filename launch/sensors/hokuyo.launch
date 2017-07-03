@@ -12,5 +12,8 @@
                 <param name="frame_id" value="/pico/laser" />
             </node>
 
+      <node pkg="tf" type="static_transform_publisher" name="pico_base_to_laser"
+        args="0 0 0 0 0 0  pico/xtion_pro /pico/laser 40" /> 
+
 </launch>
 

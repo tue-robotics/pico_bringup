@@ -2,6 +2,7 @@
 <launch>
 
     <arg name="ROBOT_REAL" default="$(optenv ROBOT_REAL false)" />
+    <arg name="asus_cam" default="true"/> <!-- Kinect camera on top -->
     
     <group ns="pico">
 	<!-- Odometry publishing -->
@@ -13,13 +14,10 @@
 	<!-- Laser publishing -->
 	<include file="$(find pico_bringup)/launch/sensors/hokuyo.launch"/>
 
-        <!-- Head controller -->
-        <node pkg="pico_head_controller" type="head_driver.py" name="head_controller" output="screen">
-	    <param name="port" value="/dev/ttyACM2"/>
-	    <param name="pan_neutral" value="1500"/>
-	    <param name="pan_max_angle" value="1.047"/>
-	    <param name="tilt_neutral" value="800"/>
-	    <param name="tilt_max_angle" value="0.524"/>
-	</node>
+     <!-- Asus RGBD camera -->
+       <group if="$(arg asus_cam)">
+        <include file="$(find pico_bringup)/launch/sensors/asusxtion.launch"/>
+      </group>
+
     </group>
 </launch>
