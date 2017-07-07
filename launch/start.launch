@@ -19,5 +19,16 @@
         <include file="$(find pico_bringup)/launch/sensors/asusxtion.launch"/>
       </group>
 
+	<!-- Specify transforms -->
+	<node pkg="tf" type="static_transform_publisher" name="base2LRF" args="0.04 0 0.37 0 0 0 /pico/base_link /pico/laser 100" />
+	<node pkg="tf" type="static_transform_publisher" name="pico2map_TEMPORARY" args="0 0 0 0 0 0 /map /pico/base_link 100" /> <!-- Should be replaced with a dynamic transform based on the localisation! -->
+	 <node pkg="tf" type="static_transform_publisher" name="map2frame" args="0 0 0 0 0 0 /my_frame /map 100" />
+	 <node pkg="tf" type="static_transform_publisher" name="base2depthCamera" args="0 0 0.87 0 1.57 0  /pico/base_link /pico/xtion_pro 100" /> 
+
+
+  	<arg name="map_file" default="$(find pico_bringup)/parameters/maps/FinalMaze.yaml"/>
+ 	 <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+	<param name="frame_id" value="/map" />
     </group>
+
 </launch>
