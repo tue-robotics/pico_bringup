@@ -4,14 +4,14 @@
     <arg name="ROBOT_REAL" default="$(optenv ROBOT_REAL false)" />
     
     <group ns="pico">
-	<!-- Odometry publishing -->
+        <!-- Odometry publishing -->
         <node pkg="pico_base_controller" type="omnibase.py" name="odometry_publisher" output="screen">
             <param name="base_frame" value="/pico/base_link"/>
             <param name="frame_id" value="/pico/laser"/>
         </node>
 
-	<!-- Laser publishing -->
-	<include file="$(find pico_bringup)/launch/sensors/hokuyo.launch"/>
+        <!-- Laser publishing -->
+        <include file="$(find pico_bringup)/launch/sensors/hokuyo.launch"/>
 
         <!-- Head controller -->
 <!--        <node pkg="pico_head_controller" type="head_driver.py" name="head_controller" output="screen">
@@ -22,8 +22,8 @@
 	    <param name="tilt_max_angle" value="0.524"/>
 	</node>
 -->
-	<!-- Speech server -->
-	<node pkg="pico_talk" type="speech_server.py" name="speech_server"/>	
+        <!-- Speech server -->
+        <node pkg="pico_talk" type="speech_server.py" name="speech_server"/>	
 
     </group>
 </launch>
